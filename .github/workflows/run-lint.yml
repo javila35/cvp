@@ -1,40 +1,21 @@
-# The prettier actions comes with git push origin...
-# That should work, but for some reason it is asking to use the --set-upstream flag
-# Considering copying and editing the prettier action for myself
-# Might be easiest to create my own action from scratch / use the template
+name: Continuous Integration
 
-on: 
-  pull_request:
+on:
+  push:
     branches:
-      - master
+    - master
 
-jobs: 
+jobs:
   prettier:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout default action
+    - name: Checkout
       uses: actions/checkout@v2
-      with:
-        ref: ${{ github.ref }}
-        fetch_depth: 0
 
-    - name: Attach HEAD
-      run: git checkout -b  ${{ github.head_ref }}
-
-    - name: Initialize branch
-      run:  git commit --allow-empty -m "My empty commit with a message"
-
-    - name: Set upstream
-      run: git push -u ${{ github.head_ref }}
-
-    - name: Run prettier
+    - name: Prettify code
       uses: creyD/prettier_action@v3.3
-      with: 
-        prettier_options: --write **/*.{js,jsx,css}
-        same_commit: true
+      with:
+        prettier_options: --write **/*.{js,jsx,css,ts,tsx}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Final push
-      run: git push -u ${{ github.head_ref }}:\${{ github.head_ref }}
